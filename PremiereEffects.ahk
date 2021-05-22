@@ -10,10 +10,13 @@ SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
 #IfWinActive ahk_exe Adobe Premiere Pro.exe
 
 
+F4::removeEffects()
 F13::preset("zoom cam w/ border")
 F14::preset("eq audio")
 F15::preset("stabilizzatore alterazione 18")
-F4::removeEffects()
+F16::preset("goprorec709")
+^+F::nidifica()
+F8::goproRecSorgente()
 
 
 
@@ -378,6 +381,149 @@ BlockInput, off ;do not comment out or delete this line -- or you won't regain c
 removeEffectsEnding:
 }
 ;END of removeEffects(). The two lines above this one are super important.
+
+
+nidifica(){
+keywait, %A_PriorHotKey% ;keywait is quite important.
+
+ifWinNotActive ahk_exe Adobe Premiere Pro.exe ;the exe is more reliable than the class, since it will work even if you're not on the primary Premiere window.
+	{
+	goto nidificaEnding ;and this line is here just in case the function is called while not inside premiere. In my case, this is because of my secondary keyboards, which aren't usually using #ifwinactive in addition to #if getKeyState(whatever). Don't worry about it.
+	}
+	
+	SetKeyDelay, 0
+	
+	sendinput, {mButton} 
+	sleep 5
+
+	Sendinput, ^+F 
+	sendinput, {enter}
+	sleep 5	
+	
+nidificaEnding:
+}
+
+
+
+goproRecSorgente()
+{
+
+keywait, %A_PriorHotKey% ;keywait is quite important.
+;Let's pretend that you called this function using the following line:
+;F4::preset("crop 50")
+;In that case, F4 is the prior hotkey, and the script will WAIT until F4 has been physically RELEASED (up) before it will continue. 
+;https://www.autohotkey.com/docs/commands/KeyWait.htm
+;Using keywait is probably WAY cleaner than allowing the physical key UP event to just happen WHENEVER during the following function, which can disrupt commands like sendinput, and cause cross-talk with modifier keys.
+
+
+;;---------You do not need the stuff BELOW this line.--------------
+
+sendinput, {blind}{SC0EC} ;for debugging. YOU DO NOT NEED THIS.
+;Keyshower(item,"preset") ;YOU DO NOT NEED THIS. -- it simply displays keystrokes on the screen for the sake of tutorials...
+; if IsFunc("Keyshower")
+	; {
+	; Func := Func("Keyshower")
+	; RetVal := Func.Call(item,"preset") 
+	; }
+ifWinNotActive ahk_exe Adobe Premiere Pro.exe ;the exe is more reliable than the class, since it will work even if you're not on the primary Premiere window.
+	{
+	goto goproending ;and this line is here just in case the function is called while not inside premiere. In my case, this is because of my secondary keyboards, which aren't usually using #ifwinactive in addition to #if getKeyState(whatever). Don't worry about it.
+	}
+;;---------You do not need the stuff ABOVE this line.--------------
+
+
+;Setting the coordinate mode is really important. This ensures that pixel distances are consistant for everything, everywhere.
+; https://www.autohotkey.com/docs/commands/CoordMode.htm
+coordmode, pixel, Window
+coordmode, mouse, Window
+coordmode, Caret, Window
+
+;This (temporarily) blocks the mouse and keyboard from sending any information, which could interfere with the funcitoning of the script.
+BlockInput, SendAndMouse
+BlockInput, MouseMove
+BlockInput, On
+;The mouse will be unfrozen at the end of this function. Note that if you do get stuck while debugging this or any other function, CTRL SHIFT ESC will allow you to regain control of the mouse. You can then end the AHK script from the Task Manager.
+
+SetKeyDelay, 0 ;NO DELAY BETWEEN STUFF sent using the "send"command! I thought it might actually be best to put this at "1," but using "0" seems to work perfectly fine.
+; https://www.autohotkey.com/docs/commands/SetKeyDelay.htm
+
+
+Sendinput, ^+q ;in Premiere's shortcuts panel, ASSIGN "shuttle stop" to CTRL ALT SHIFT K.
+sleep 10
+Sendinput, ^!q ; another shortcut for Shuttle Stop. Sometimes, just one is not enough.
+;so if the video is playing, this will stop it. Othewise, it can mess up the script.
+sleep 5
+
+;msgbox, ahk_class =   %class% `nClassNN =     %classNN% `nTitle= %Window%
+;;This was my debugging to check if there are lingering variables from last time the script was run. You do not need that line.
+
+MouseGetPos, xposP, yposP ;------------------stores the cursor's current coordinates at X%xposP% Y%yposP%
+;KEEP IN MIND that this function should only be called when your cursor is hovering over a clip, or a group of selected clips, on the timeline. That's because the cursor will be returned to that exact location, carrying the desired preset, which it will drop there. MEANING, that this function won't work if you select clips, but don't have the cursor hovering over them.
+
+;sendinput, {mButton} ;this will MIDDLE CLICK to bring focus to the panel underneath the cursor (which must be the timeline). I forget exactly why, but if you create a nest, and immediately try to apply a preset to it, it doesn't work, because the timeline wasn't in focus...? Or something. IDK.
+sleep 5
+
+;prFocus("effects") ;Brings focus to the effects panel. You must find, then copy/paste the prFocus() function definition into your own .ahk script as well. ALTERNATIVELY, if you don't want to do that, you can delete this line, and "comment in" the 3 lines below:
+
+
+sendinput, {blind}{SC0EC} ;for debugging. YOU DO NOT NEED THIS LINE.
+
+sleep 15 ;"sleep" means the script will wait for 15 milliseconds before the next command. This is done to give Premiere some time to load its own things.
+
+
+;The Effects panel's find box should now be activated.
+;If there is text contained inside, it has now been highlighted. There is also a blinking vertical line at the end of any text, which is called the "text insertion point", or "caret".
+
+;;;msgbox, caret X Y is %A_CaretX%, %A_CaretY%
+
+MouseMove, 300, 200 , 0
+sleep 5
+
+MouseGetPos, , , Window, classNN
+WinGetClass, class, ahk_id %Window%
+
+;tooltip, 2 - ahk_class =   %class% `nClassNN =     %classNN% `nTitle= %Window%
+
+;;;note to self, I think ControlGetPos is not affected by coordmode??  Or at least, it gave me the wrong coordinates if premiere is not fullscreened... IDK. https://autohotkey.com/docs/commands/ControlGetPos.htm
+
+ControlGetPos, XX, YY, Width, Height, %classNN%, ahk_class %class%, SubWindow, SubWindow 
+
+;note to self, I tried to exclude subwindows but I don't think it works...?
+;;my results:  59, 1229, 252, 21,     Edit1,     ahk_class Premiere Pro
+;tooltip, classNN = %classNN%
+
+;;Now we have found a lot of useful information about this find box. Turns out, we don't need most of it...
+;;we just need the X and Y coordinates of the "upper left" corner...
+
+;;Comment in the following line to get a message box of your current variable values. The script will not advance until you dismiss a message box. (Use the enter key.)
+;MsgBox, xx=%XX% yy=%YY%
+
+;; https://www.autohotkey.com/docs/commands/MouseMove.htm
+
+;MouseMove, XX-25, YY+10, 0 ;--------------------for 150% UI scaling, this moves the cursor onto the magnifying glass
+MouseMove, XX+20, YY+20, 0 ;--------------------for 100% UI scaling, this moves the cursor onto the magnifying glass
+sleep 5
+;msgbox, should be in the center of the magnifying glass now. ;;<--comment this in for help with debugging.
+
+MouseClick, left, , , 1
+sleep 5
+
+MouseMove, XX+20, YY+200, 0 ;--------------------for 100% UI scaling, this moves the cursor onto the magnifying glass
+
+preset("goprorec709")
+sleep 5
+
+MouseMove, xposP, yposP ;------------------stores the cursor's current coordinates at X%xposP% Y%yposP%
+
+
+blockinput, MouseMoveOff ;returning mouse movement ability
+BlockInput, off ;do not comment out or delete this line -- or you won't regain control of the keyboard!! However, CTRL ALT DELETE will still work if you get stuck!! Cool.
+
+goproending:
+}
+;END of preset(). The two lines above this one are super important.
+
+
 
 
 #ifwinactive ahk_class Notepad++
