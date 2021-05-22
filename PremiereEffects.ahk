@@ -7,8 +7,6 @@ SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
 
 #SingleInstance force
 
-^j::send, my first script helllo
-
 #IfWinActive ahk_exe Adobe Premiere Pro.exe
 
 
