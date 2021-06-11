@@ -24,77 +24,33 @@ F21::preset("lumetri v-log pro")
 ^+F::nidifica()
 ^space::searchEffect()
 
-
-preset(item)
-{
-;******FUNCTION FOR DIRECTLY APPLYING A PRESET EFFECT TO A CLIP!******
-; preset() is my most used, and most useful AHK function for Premiere Pro!
-
-;===================================================================================
-; NEW TO AHK? READ ALL THE BELOW INSTRUCTIONS BEFORE YOU TRY TO USE THIS.
-; THIS WILL NOT WORK UNLESS YOU DO SOME SETUP FIRST!
-; Fortunately,
-; THERE IS A FULL VIDEO TUTORIAL THAT TEACHES YOU HOW TO USE THIS, STEP BY STEP.
-; [[[[[LINK TBD, IT'S NOT FINISHED JUST YET.]]]]]
-;
-; Even if Adobe does one day add this feature to Premiere, this video tutorial will
-; still be very useful to anyone who is learning how to use AHK with Premiere,
-; especially if you're trying to use any of the other functions that I've created.
-; 
-; To call the function, use something like
-; F4::preset("crop 50")
-; Where "crop 50" is the exact, unique name of the preset you wish to apply.
-; 
-; For this function to work, you MUST go into Premiere's Keyboard Shortcuts panel,
-; find the following commands, and add these keyboard shortcut assignments to them:
 ; 
 ; Select Find Box ------- CTRL B
 ; Shuttle Stop ---------- CTRL ALT SHIFT K
 ; Window > Effects  ----- CTRL ALT SHIFT 7
-;
-; (You can use different shortcuts if you like, as long
-; as those are the ones you send with your AHK script.)
-; 
-;====================================================================================
 
-;Keep in mind, I use 100% UI scaling on my primary monitor, so if you use 125% or 150% or anything else, your pixel distances for commands like Mousemove WILL be different. Therefore, you'll need to "comment in" the message boxes, change some numbers, and keep saving and refreshing and retrying the script until you've got it working!
-;To find out what UI scaling your screen uses, hit the windows key, type in "display," hit Enter, and then scroll down to "Scale and layout." Under "Change the size of text, apps, and other items," there will be a selection menu thing. Mine is set to "100%." I have NOT done anything in the "Advanced scaling settings" blue link just below that.
 
-;To use this script yourself, carefully go through  testing the script and changing the values, ensuring that the script works, one line at a time. use message boxes to check on variables and see where the cursor is. remove those message boxes later when you have it all working!
-
-;NOTE: I built this under the assumption that your Effects Panel will be on the same monitor as your timeline. I can't guarantee that it'll work if the Effects Panel is on another monitor.
-
-;NOTE: You also need to get the PrFocus() function.
-
-;NOTE: To use the preset() function, your cursor must first be hovering over the clip that you wish to apply your preset to. It also works to select multiple clips, again, as long as your cursor is hovering over one of the selected clips.
-
+preset(item)
+{
 
 keywait, %A_PriorHotKey% ;keywait is quite important.
 ;Let's pretend that you called this function using the following line:
 ;F4::preset("crop 50")
 ;In that case, F4 is the prior hotkey, and the script will WAIT until F4 has been physically RELEASED (up) before it will continue. 
-;https://www.autohotkey.com/docs/commands/KeyWait.htm
-;Using keywait is probably WAY cleaner than allowing the physical key UP event to just happen WHENEVER during the following function, which can disrupt commands like sendinput, and cause cross-talk with modifier keys.
-
 
 ;;---------You do not need the stuff BELOW this line.--------------
 
 sendinput, {blind}{SC0EC} ;for debugging. YOU DO NOT NEED THIS.
-;Keyshower(item,"preset") ;YOU DO NOT NEED THIS. -- it simply displays keystrokes on the screen for the sake of tutorials...
-; if IsFunc("Keyshower")
-	; {
-	; Func := Func("Keyshower")
-	; RetVal := Func.Call(item,"preset") 
-	; }
+
 ifWinNotActive ahk_exe Adobe Premiere Pro.exe ;the exe is more reliable than the class, since it will work even if you're not on the primary Premiere window.
 	{
 	goto theEnding ;and this line is here just in case the function is called while not inside premiere. In my case, this is because of my secondary keyboards, which aren't usually using #ifwinactive in addition to #if getKeyState(whatever). Don't worry about it.
 	}
-;;---------You do not need the stuff ABOVE this line.--------------
+
 
 
 ;Setting the coordinate mode is really important. This ensures that pixel distances are consistant for everything, everywhere.
-; https://www.autohotkey.com/docs/commands/CoordMode.htm
+
 coordmode, pixel, Window
 coordmode, mouse, Window
 coordmode, Caret, Window
@@ -145,10 +101,7 @@ if (A_CaretX = "")
 {
 ;No Caret (blinking vertical line) can be found.
 
-;The following loop is waiting until it sees the caret. THIS IS SUPER IMPORTANT, because Premiere is sometimes quite slow to actually select the find box, and if the function tries to proceed before that has happened, it will fail. This would happen to me about 10% of the time.
-;Using the loop is also way better than just ALWAYS waiting 60 milliseconds like I was before. With the loop, this function can continue as soon as Premiere is ready.
-
-;sleep 60 ;<—Use this line if you don't want to use the loop below. But the loop should work perfectly fine as-is, without any modification from you.
+;The following loop is waiting until it sees the caret.
 
 waiting2 = 0
 loop
@@ -164,10 +117,7 @@ loop
 	if (waiting2 > 40)
 		{
 		tooltip, FAIL - no caret found. `nIf your cursor will not move`, hit the button to call the preset() function again.`nTo remove this tooltip`, refresh the script using its icon in the taskbar.`n`nIt's possible Premiere tried to AUTOSAVE at just the wrong moment!
-		;Note to self, need much better way to debug this than screwing the user. As it stands, that tooltip will stay there forever.
-		;USER: Running the function again, or reloading the script, will remove that tooltip.
-		;sleep 200
-		;tooltip,
+		
 		sleep 20
 		GOTO theEnding
 		}
@@ -175,8 +125,7 @@ loop
 sleep 1
 tooltip,
 }
-;The loop has now ended.
-;yeah, I've seen this go all the way up to "8," which is 264 milliseconds
+
 
 MouseMove, %A_CaretX%, %A_CaretY%, 0 ;this moves the cursor, instantly, to the position of the caret.
 sleep 5 ;waiting while Windows does this. Just in case it takes longer than 0 milliseconds.
@@ -267,11 +216,7 @@ IfInString, item, CROP
 		RetVal := Func.Call() 
 		}
 ;;If you don't have cropClick, then nothing happens. That's good!
-	
-	;;This code below is what I had used before, but it will complain that you haven't defined the function "cropClick", whereas, the code above will NOT!
-	;sleep 320
-	;cropClick()
-	;;msgbox, that had "CROP" in it.
+
 	}
 ;;----remove the code above if it makes no sense to you----
 
