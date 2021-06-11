@@ -14,11 +14,15 @@ F4::removeEffects()
 F13::preset("zoom cam w/ border")
 F14::preset("eq audio")
 F15::preset("stabilizzatore alterazione 18")
-F16::preset("goprorec709")
+F16::goproRecSorgente()
+F17::newAdjustmentLayer()
+F18::preset("black bars")
+F19::projSetup("Z:\Editing\FedericoLeo\LowerThirds")
+F20::preset("lumetri v-log athena")
+F21::preset("lumetri v-log pro")
+
 ^+F::nidifica()
-F8::goproRecSorgente()
-
-
+^space::searchEffect()
 
 
 preset(item)
@@ -357,6 +361,31 @@ ControlGetPos, XX, YY, Width, Height, %classNN%, ahk_class %class%, SubWindow, S
 ;MsgBox, xx=%XX% yy=%YY%
 
 ;; https://www.autohotkey.com/docs/commands/MouseMove.htm
+
+MouseClick, right
+sleep 50
+
+Send {Down}
+Send {Down}
+Send {Down}
+Send {Down}
+sleep 5
+Send {enter}
+sleep 5
+Send {enter}
+sleep 30
+
+MouseMove, xposP, yposP, 0 ;--------------------for 100% UI scaling, this moves the cursor onto the magnifying glass
+sleep 5
+
+MouseClick, middle, , , 1 ;this returns focus to the panel the cursor is hovering above, WITHOUT selecting anything. great! And now timeline shortcuts like JKL will work.
+
+blockinput, MouseMoveOff ;returning mouse movement ability
+BlockInput, off ;do not comment out or delete this line -- or you won't regain control of the keyboard!! However, CTRL ALT DELETE will still work if you get stuck!! Cool.
+
+
+;;OLD VERSION OF THE SCRIPT THAT MOVED THE CURSOR
+/*
 MouseClick, right
 sleep 50
 
@@ -377,6 +406,8 @@ MouseClick, middle, , , 1 ;this returns focus to the panel the cursor is hoverin
 
 blockinput, MouseMoveOff ;returning mouse movement ability
 BlockInput, off ;do not comment out or delete this line -- or you won't regain control of the keyboard!! However, CTRL ALT DELETE will still work if you get stuck!! Cool.
+*/
+
 
 removeEffectsEnding:
 }
@@ -523,6 +554,498 @@ goproending:
 }
 ;END of preset(). The two lines above this one are super important.
 
+newAdjustmentLayer(){
+keywait, %A_PriorHotKey% ;keywait is quite important.
+;Let's pretend that you called this function using the following line:
+;F4::preset("crop 50")
+;In that case, F4 is the prior hotkey, and the script will WAIT until F4 has been physically RELEASED (up) before it will continue. 
+;https://www.autohotkey.com/docs/commands/KeyWait.htm
+;Using keywait is probably WAY cleaner than allowing the physical key UP event to just happen WHENEVER during the following function, which can disrupt commands like sendinput, and cause cross-talk with modifier keys.
+
+
+;;---------You do not need the stuff BELOW this line.--------------
+
+sendinput, {blind}{SC0EC} ;for debugging. YOU DO NOT NEED THIS.
+;Keyshower(item,"preset") ;YOU DO NOT NEED THIS. -- it simply displays keystrokes on the screen for the sake of tutorials...
+; if IsFunc("Keyshower")
+	; {
+	; Func := Func("Keyshower")
+	; RetVal := Func.Call(item,"preset") 
+	; }
+ifWinNotActive ahk_exe Adobe Premiere Pro.exe ;the exe is more reliable than the class, since it will work even if you're not on the primary Premiere window.
+	{
+	goto adjEnd ;and this line is here just in case the function is called while not inside premiere. In my case, this is because of my secondary keyboards, which aren't usually using #ifwinactive in addition to #if getKeyState(whatever). Don't worry about it.
+	}
+;;---------You do not need the stuff ABOVE this line.--------------
+
+
+;Setting the coordinate mode is really important. This ensures that pixel distances are consistant for everything, everywhere.
+; https://www.autohotkey.com/docs/commands/CoordMode.htm
+coordmode, pixel, Window
+coordmode, mouse, Window
+coordmode, Caret, Window
+
+;This (temporarily) blocks the mouse and keyboard from sending any information, which could interfere with the funcitoning of the script.
+BlockInput, SendAndMouse
+BlockInput, MouseMove
+BlockInput, On
+;The mouse will be unfrozen at the end of this function. Note that if you do get stuck while debugging this or any other function, CTRL SHIFT ESC will allow you to regain control of the mouse. You can then end the AHK script from the Task Manager.
+
+SetKeyDelay, 0 ;NO DELAY BETWEEN STUFF sent using the "send"command! I thought it might actually be best to put this at "1," but using "0" seems to work perfectly fine.
+; https://www.autohotkey.com/docs/commands/SetKeyDelay.htm
+
+
+Sendinput, ^+9 ;in Premiere's shortcuts panel, ASSIGN "shuttle stop" to CTRL ALT SHIFT K.
+sleep 10
+Sendinput, ^!9 ; another shortcut for Shuttle Stop. Sometimes, just one is not enough.
+;so if the video is playing, this will stop it. Othewise, it can mess up the script.
+sleep 5
+
+;msgbox, ahk_class =   %class% `nClassNN =     %classNN% `nTitle= %Window%
+;;This was my debugging to check if there are lingering variables from last time the script was run. You do not need that line.
+
+Send {LAlt}
+
+Send {Down}
+sleep 5
+Send {Right}
+sleep 5
+Send {Down}
+Send {Down}
+Send {Down}
+Send {Down}
+Send {Down}
+Send {Down}
+Send {Down}
+Send {Down}
+Send {Down}
+Send {Down}
+Send {Down}
+sleep 5
+Send {enter}
+sleep 5
+Send {enter}
+
+
+
+blockinput, MouseMoveOff ;returning mouse movement ability
+BlockInput, off ;do not comment out or delete this line -- or you won't regain control of the keyboard!! However, CTRL ALT DELETE will still work if you get stuck!! Cool.
+
+adjEnd:
+}
+;END OF newADJLEVEL()
+
+projSetup(item)
+{
+keywait, %A_PriorHotKey% ;keywait is quite important.
+
+
+;;---------You do not need the stuff BELOW this line.--------------
+
+sendinput, {blind}{SC0EC} ;for debugging. YOU DO NOT NEED THIS.
+
+ifWinNotActive ahk_exe Adobe Premiere Pro.exe ;the exe is more reliable than the class, since it will work even if you're not on the primary Premiere window.
+	{
+	goto projsetupend ;and this line is here just in case the function is called while not inside premiere. In my case, this is because of my secondary keyboards, which aren't usually using #ifwinactive in addition to #if getKeyState(whatever). Don't worry about it.
+	}
+;;---------You do not need the stuff ABOVE this line.--------------
+
+
+;Setting the coordinate mode is really important. This ensures that pixel distances are consistant for everything, everywhere.
+; https://www.autohotkey.com/docs/commands/CoordMode.htm
+coordmode, pixel, Window
+coordmode, mouse, Window
+coordmode, Caret, Window
+
+;This (temporarily) blocks the mouse and keyboard from sending any information, which could interfere with the funcitoning of the script.
+BlockInput, SendAndMouse
+BlockInput, MouseMove
+BlockInput, On
+;The mouse will be unfrozen at the end of this function. Note that if you do get stuck while debugging this or any other function, CTRL SHIFT ESC will allow you to regain control of the mouse. You can then end the AHK script from the Task Manager.
+
+SetKeyDelay, 0 ;NO DELAY BETWEEN STUFF sent using the "send"command! I thought it might actually be best to put this at "1," but using "0" seems to work perfectly fine.
+; https://www.autohotkey.com/docs/commands/SetKeyDelay.htm
+
+
+Sendinput, ^+9 ;in Premiere's shortcuts panel, ASSIGN "shuttle stop" to CTRL ALT SHIFT K.
+sleep 10
+Sendinput, ^!9 ; another shortcut for Shuttle Stop. Sometimes, just one is not enough.
+;so if the video is playing, this will stop it. Othewise, it can mess up the script.
+sleep 5
+
+;msgbox, ahk_class =   %class% `nClassNN =     %classNN% `nTitle= %Window%
+;;This was my debugging to check if there are lingering variables from last time the script was run. You do not need that line.
+
+
+;;IMPORT ENDING MUSIC
+
+clipboard:="Z:\Editing\Assets\Artlist.io\Artlist_Fede\FerrariRoma" ;copy variable into clipboard
+
+Sendinput, ^+9
+sleep 5
+
+Sendinput, ^b
+sleep 5
+
+Sendinput, Music
+sleep 5
+
+
+Sendinput, ^i
+sleep 300
+
+Sendinput, ^l
+sleep 300
+
+Sendinput, ^v ;paste folder path
+;Sendinput, %item%
+sleep 300
+
+Send {enter}
+sleep 150
+
+Send {Tab}
+sleep 150
+Send {Tab}
+sleep 150
+Send {Tab}
+sleep 150
+Send {Tab}
+sleep 200
+Send {Tab}
+sleep 150
+
+Send {Down}
+sleep 5
+
+Send {enter}
+sleep 1200
+Send {enter}
+sleep 5
+
+Send {enter}
+sleep 5
+
+;;IMPORT LOWER THIRDS
+
+clipboard:=item ;copy variable into clipboard
+
+
+Sendinput, ^i
+sleep 300
+
+Sendinput, ^l
+sleep 300
+
+Sendinput, ^v ;paste folder path
+;Sendinput, %item%
+sleep 300
+
+Send {enter}
+sleep 150
+
+Send {Tab}
+sleep 150
+Send {Tab}
+sleep 150
+Send {Tab}
+sleep 150
+Send {Tab}
+sleep 150
+Send {Tab}
+sleep 150
+;msgbox, folder
+
+Send {Down}
+sleep 5
+Send {Down}
+sleep 5
+
+Send {Tab}
+sleep 15
+Send {Tab}
+sleep 15
+Send {Tab}
+sleep 5
+Send {enter}
+
+*/
+
+
+
+blockinput, MouseMoveOff ;returning mouse movement ability
+BlockInput, off ;do not comment out or delete this line -- or you won't regain control of the keyboard!! However, CTRL ALT DELETE will still work if you get stuck!! Cool.
+
+projsetupend:
+}
+;END OF projSetup()
+
+
+searchEffect(){
+keywait, %A_PriorHotKey% 
+
+
+
+
+sendinput, {blind}{SC0EC} ;for debugging. YOU DO NOT NEED THIS.
+;Keyshower(item,"preset") ;YOU DO NOT NEED THIS. -- it simply displays keystrokes on the screen for the sake of tutorials...
+; if IsFunc("Keyshower")
+	; {
+	; Func := Func("Keyshower")
+	; RetVal := Func.Call(item,"preset") 
+	; }
+ifWinNotActive ahk_exe Adobe Premiere Pro.exe ;the exe is more reliable than the class, since it will work even if you're not on the primary Premiere window.
+	{
+	goto searchEnd ;and this line is here just in case the function is called while not inside premiere. In my case, this is because of my secondary keyboards, which aren't usually using #ifwinactive in addition to #if getKeyState(whatever). Don't worry about it.
+	}
+;;---------You do not need the stuff ABOVE this line.--------------
+
+
+;Setting the coordinate mode is really important. This ensures that pixel distances are consistant for everything, everywhere.
+; https://www.autohotkey.com/docs/commands/CoordMode.htm
+coordmode, pixel, Window
+coordmode, mouse, Window
+coordmode, Caret, Window
+
+;This (temporarily) blocks the mouse and keyboard from sending any information, which could interfere with the funcitoning of the script.
+
+BlockInput, On
+;The mouse will be unfrozen at the end of this function. Note that if you do get stuck while debugging this or any other function, CTRL SHIFT ESC will allow you to regain control of the mouse. You can then end the AHK script from the Task Manager.
+
+SetKeyDelay, 0 ;NO DELAY BETWEEN STUFF sent using the "send"command! I thought it might actually be best to put this at "1," but using "0" seems to work perfectly fine.
+; https://www.autohotkey.com/docs/commands/SetKeyDelay.htm
+
+
+Sendinput, ^!+k ;in Premiere's shortcuts panel, ASSIGN "shuttle stop" to CTRL ALT SHIFT K.
+sleep 10
+Sendinput, ^!+k ; another shortcut for Shuttle Stop. Sometimes, just one is not enough.
+;so if the video is playing, this will stop it. Othewise, it can mess up the script.
+sleep 5
+
+
+
+
+Sendinput, ^+!7 ;CTRL SHIFT ALT 7 --- In Premiere's Keyboard Shortcuts panel, you nust find the "Effects" panel and assign the shortcut CTRL SHIFT ALT 7 to it. (The default shortcut is SHIFT 7. Because Premiere does allow multiple shortcuts per command, you can keep SHIFT 7 as well, or you can delete it. I have deleted it.)
+sleep 12
+Sendinput, ^!+7 ;you must send this shortcut again, because there are some edge cases where it may not have worked the first time.
+
+sleep 5
+Sendinput, ^b ;CTRL B ------- set in premiere's shortcuts panel to "select find box"
+sleep 5
+;Alternatively, it also works to click on the magnifying glass if you wish to select the find box... but this is unnecessary and sloppy.
+
+;The Effects panel's find box should now be activated.
+;If there is text contained inside, it has now been highlighted. There is also a blinking vertical line at the end of any text, which is called the "text insertion point", or "caret".
+
+if (A_CaretX = "")
+{
+;No Caret (blinking vertical line) can be found.
+
+;The following loop is waiting until it sees the caret. THIS IS SUPER IMPORTANT, because Premiere is sometimes quite slow to actually select the find box, and if the function tries to proceed before that has happened, it will fail. This would happen to me about 10% of the time.
+;Using the loop is also way better than just ALWAYS waiting 60 milliseconds like I was before. With the loop, this function can continue as soon as Premiere is ready.
+
+;sleep 60 ;<—Use this line if you don't want to use the loop below. But the loop should work perfectly fine as-is, without any modification from you.
+
+waiting2 = 0
+loop
+	{
+	waiting2 ++
+	sleep 33
+	tooltip, counter = (%waiting2% * 33)`nCaret = %A_CaretX%
+	if (A_CaretX <> "")
+		{
+		tooltip, CARET WAS FOUND
+		break
+		}
+	if (waiting2 > 40)
+		{
+		tooltip, FAIL - no caret found. `nIf your cursor will not move`, hit the button to call the preset() function again.`nTo remove this tooltip`, refresh the script using its icon in the taskbar.`n`nIt's possible Premiere tried to AUTOSAVE at just the wrong moment!
+		;Note to self, need much better way to debug this than screwing the user. As it stands, that tooltip will stay there forever.
+		;USER: Running the function again, or reloading the script, will remove that tooltip.
+		;sleep 200
+		;tooltip,
+		sleep 20
+		GOTO searchEnd
+		}
+	}
+sleep 1
+tooltip,
+}
+
+sendinput, {Delete}
+
+
+BlockInput, off
+searchEnd:
+}
+
+
+
+;;BLENDER STUFF
+
+#IfWinActive ahk_exe blender.exe
+
+F6::openCyclesX()
+
+openCyclesX()
+{
+
+keywait, %A_PriorHotKey% 
+
+
+
+sendinput, {blind}{SC0EC} ;for debugging. YOU DO NOT NEED THIS.
+;Keyshower(item,"preset") ;YOU DO NOT NEED THIS. -- it simply displays keystrokes on the screen for the sake of tutorials...
+; if IsFunc("Keyshower")
+	; {
+	; Func := Func("Keyshower")
+	; RetVal := Func.Call(item,"preset") 
+	; }
+ifWinNotActive ahk_exe blender.exe ;the exe is more reliable than the class, since it will work even if you're not on the primary Premiere window.
+	{
+	goto cyclesXEND ;and this line is here just in case the function is called while not inside premiere. In my case, this is because of my secondary keyboards, which aren't usually using #ifwinactive in addition to #if getKeyState(whatever). Don't worry about it.
+	}
+;;---------You do not need the stuff ABOVE this line.--------------
+
+
+;Setting the coordinate mode is really important. This ensures that pixel distances are consistant for everything, everywhere.
+; https://www.autohotkey.com/docs/commands/CoordMode.htm
+coordmode, pixel, Window
+coordmode, mouse, Window
+coordmode, Caret, Window
+
+;This (temporarily) blocks the mouse and keyboard from sending any information, which could interfere with the funcitoning of the script.
+BlockInput, SendAndMouse
+BlockInput, MouseMove
+BlockInput, On
+;The mouse will be unfrozen at the end of this function. Note that if you do get stuck while debugging this or any other function, CTRL SHIFT ESC will allow you to regain control of the mouse. You can then end the AHK script from the Task Manager.
+
+SetKeyDelay, 0 ;NO DELAY BETWEEN STUFF sent using the "send"command! I thought it might actually be best to put this at "1," but using "0" seems to work perfectly fine.
+; https://www.autohotkey.com/docs/commands/SetKeyDelay.htm
+
+MouseGetPos, xposP, yposP ;------------------stores the cursor's current coordinates at X%xposP% Y%yposP%
+
+
+
+CoordMode,Mouse,Screen
+    WinGetPos, winTopL_x, winTopL_y, width, height, A
+    winCenter_x := winTopL_x + width/2
+    winCenter_y := winTopL_y + height/2
+    ;MouseMove, X, Y, 0 ; does not work with multi-monitor
+    DllCall("SetCursorPos", int, winTopL_x, int, winTopL_y)
+
+
+sleep 5
+
+MouseMove, winTopL_x+700, winTopL_y+500, 0 
+sleep 5
+
+Sendinput, ^s ;save proj
+sleep 5
+Sendinput, ^+s ;open window
+sleep 1000
+sendinput, {mButton}
+
+;KEEP IN MIND that this function should only be called when your cursor is hovering over a clip, or a group of selected clips, on the timeline. That's because the cursor will be returned to that exact location, carrying the desired preset, which it will drop there. MEANING, that this function won't work if you select clips, but don't have the cursor hovering over them.
+
+
+CoordMode,Mouse,Screen
+    WinGetPos, winTopL_x, winTopL_y, width, height, A
+    winCenter_x := winTopL_x + width/2
+    winCenter_y := winTopL_y + height/2
+    ;MouseMove, X, Y, 0 ; does not work with multi-monitor
+    DllCall("SetCursorPos", int, winTopL_x, int, winTopL_y)
+
+
+sleep 5
+
+MouseMove, winTopL_x+450, winTopL_y+50, 0 
+sleep 5
+
+MouseClick, left
+sleep 5
+
+Sendinput, ^c
+sleep 5
+
+
+Sendinput, !{F4}
+sleep 5
+
+
+
+WinClose
+sleep 60
+
+
+run, "D:\Documenti\Download\blender-3.0.0-alpha+cycles-x.a117a9c63c3a-windows.amd64-release\blender.exe"
+sleep 5000
+
+
+CoordMode,Mouse,Screen
+    WinGetPos, winTopL_x, winTopL_y, width, height, A
+    winCenter_x := winTopL_x + width/2
+    winCenter_y := winTopL_y + height/2
+    ;MouseMove, X, Y, 0 ; does not work with multi-monitor
+    DllCall("SetCursorPos", int, winTopL_x, int, winTopL_y)
+	
+sleep 5
+
+MouseMove, winTopL_x+500, winTopL_y+600, 0 
+sleep 5
+
+sendinput, {mButton}
+sleep 5
+
+Sendinput, ^o ;open window
+sleep 500
+sendinput, {mButton}
+sleep 5
+
+CoordMode,Mouse,Screen
+    WinGetPos, winTopL_x, winTopL_y, width, height, A
+    winCenter_x := winTopL_x + width/2
+    winCenter_y := winTopL_y + height/2
+    ;MouseMove, X, Y, 0 ; does not work with multi-monitor
+    DllCall("SetCursorPos", int, winTopL_x, int, winTopL_y)
+
+
+sleep 5
+
+MouseMove, winTopL_x+450, winTopL_y+50, 0 
+sleep 5
+
+MouseClick, left
+sleep 5
+
+Sendinput, ^v
+sleep 5
+Sendinput, {enter}
+
+MouseMove, winTopL_x+450, winTopL_y+150, 0 
+sleep 5
+sendinput, {mButton}
+sleep 5
+
+Send {Down}
+sleep 5
+Sendinput, {enter}
+sleep 5
+
+
+MouseMove, xposP, yposP, 0
+
+blockinput, MouseMoveOff ;returning mouse movement ability
+BlockInput, off ;do not comment out or delete this line -- or you won't regain control of the keyboard!! However, CTRL ALT DELETE will still work if you get stuck!! Cool.
+
+
+
+;The line below is where all those GOTOs are going to.
+cyclesXEND:
+}
+;END of openCyclesX(). The two lines above this one are super important.
+
+
 
 
 
@@ -533,4 +1056,5 @@ sleep 10
 SoundBeep, 1000,500
 Reload
 Return
+
 
