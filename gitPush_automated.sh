@@ -1,3 +1,3 @@
 git add --all
-#git commit -m "automated update"
-#git push -f origin main
+git commit -m "automated update"
+git push -f origin main
