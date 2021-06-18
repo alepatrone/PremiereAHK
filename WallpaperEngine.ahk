@@ -31,7 +31,7 @@ sendinput, {blind}{SC0EC} ;for debugging. YOU DO NOT NEED THIS.
 	; }
 	
 	run, "D:\Program Files (x86)\Steam\steamapps\common\wallpaper_engine\wallpaper32.exe"
-	sleep 1500
+	sleep 3000
 ifWinNotActive ahk_exe ui32.exe ;the exe is more reliable than the class, since it will work even if you're not on the primary Premiere window.
 	{
 	goto theEnding ;and this line is here just in case the function is called while not inside premiere. In my case, this is because of my secondary keyboards, which aren't usually using #ifwinactive in addition to #if getKeyState(whatever). Don't worry about it.
@@ -97,7 +97,7 @@ sleep 5
 MouseClick, left, , , 1 ;-----------------------the actual click
 sleep 5
 
-MouseMove, winTopL_x+200, winTopL_y+180, 0 ;--------------------for 100% UI scaling, this moves the cursor onto the magnifying glass
+MouseMove, winTopL_x+200, winTopL_y+130, 0 
 sleep 300
 
 
@@ -107,7 +107,7 @@ sleep 5
 ;msgbox, firstmenu
 
 
-MouseMove, winTopL_x+200, winTopL_y+210, 0 ;--------------------for 100% UI scaling, this moves the cursor onto the magnifying glass
+MouseMove, winTopL_x+200, winTopL_y+230, 0 ;--------------------for 100% UI scaling, this moves the cursor onto the magnifying glass
 sleep 300
 
 MouseClick, left, , , 1 ;-----------------------the actual click
