@@ -11,8 +11,8 @@ SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
 
 
 F4::removeEffects()
-F13::preset("zoom cam w/ border")
 F14::preset("eq audio")
+F13::preset("zoom cam w/ border")
 F15::preset("stabilizzatore alterazione 18")
 F6::preset("stabilizzatore alterazione 18")
 F16::goproRecSorgente()
@@ -924,7 +924,7 @@ WinClose
 sleep 60
 
 
-run, "D:\Documenti\Download\blender-3.0.0-alpha+cycles-x.a117a9c63c3a-windows.amd64-release\blender.exe"
+run, "D:\Documenti\Download\blender-3.0.0-alpha+cycles-x.ce865d3f721f-windows.amd64-release\blender.exe"
 sleep 5000
 
 
