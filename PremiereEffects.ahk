@@ -15,15 +15,19 @@ F14::preset("eq audio")
 F13::preset("zoom cam w/ border")
 F15::preset("stabilizzatore alterazione 18")
 F6::preset("stabilizzatore alterazione 18")
-F16::goproRecSorgente()
+F16::presetSorgente("goprorec709")
 F17::newAdjustmentLayer()
 F18::preset("black bars")
 F19::projSetup("Z:\Editing\FedericoLeo\LowerThirds")
 F20::preset("lumetri v-log athena")
 F21::preset("lumetri v-log pro")
+F22::preset("lumetri Cine-D Athena")
+F23::preset("GoPro FX Reframe Preset")
+F24::presetSorgente("flip sottosopra")
 
 ^+F::nidifica()
 ^space::searchEffect()
+^+space::searchProj()
 
 ; 
 ; Select Find Box ------- CTRL B
@@ -321,38 +325,13 @@ sleep 5
 Send {enter}
 sleep 30
 
-MouseMove, xposP, yposP, 0 ;--------------------for 100% UI scaling, this moves the cursor onto the magnifying glass
+MouseMove, xposP, yposP ;--------------------for 100% UI scaling, this moves the cursor onto the magnifying glass
 sleep 5
 
 MouseClick, middle, , , 1 ;this returns focus to the panel the cursor is hovering above, WITHOUT selecting anything. great! And now timeline shortcuts like JKL will work.
 
 blockinput, MouseMoveOff ;returning mouse movement ability
 BlockInput, off ;do not comment out or delete this line -- or you won't regain control of the keyboard!! However, CTRL ALT DELETE will still work if you get stuck!! Cool.
-
-
-;;OLD VERSION OF THE SCRIPT THAT MOVED THE CURSOR
-/*
-MouseClick, right
-sleep 50
-
-MouseMove, xposP+20, yposP-700, 0 ;--------------------for 100% UI scaling, this moves the cursor onto the magnifying glass
-
-;msgbox, should be on remove effects. ;;<--comment this in for help with debugging.
-
-sleep 5
-
-MouseClick, left, , , 1 ;-----------------------the actual click
-sleep 5
-sendinput, {enter}
-sleep 30
-MouseMove, xposP, yposP, 0 ;--------------------for 100% UI scaling, this moves the cursor onto the magnifying glass
-sleep 5
-
-MouseClick, middle, , , 1 ;this returns focus to the panel the cursor is hovering above, WITHOUT selecting anything. great! And now timeline shortcuts like JKL will work.
-
-blockinput, MouseMoveOff ;returning mouse movement ability
-BlockInput, off ;do not comment out or delete this line -- or you won't regain control of the keyboard!! However, CTRL ALT DELETE will still work if you get stuck!! Cool.
-*/
 
 
 removeEffectsEnding:
@@ -381,8 +360,7 @@ nidificaEnding:
 }
 
 
-
-goproRecSorgente()
+presetSorgente(item)
 {
 
 keywait, %A_PriorHotKey% ;keywait is quite important.
@@ -404,7 +382,7 @@ sendinput, {blind}{SC0EC} ;for debugging. YOU DO NOT NEED THIS.
 	; }
 ifWinNotActive ahk_exe Adobe Premiere Pro.exe ;the exe is more reliable than the class, since it will work even if you're not on the primary Premiere window.
 	{
-	goto goproending ;and this line is here just in case the function is called while not inside premiere. In my case, this is because of my secondary keyboards, which aren't usually using #ifwinactive in addition to #if getKeyState(whatever). Don't worry about it.
+	goto presetSorgenteEnd ;and this line is here just in case the function is called while not inside premiere. In my case, this is because of my secondary keyboards, which aren't usually using #ifwinactive in addition to #if getKeyState(whatever). Don't worry about it.
 	}
 ;;---------You do not need the stuff ABOVE this line.--------------
 
@@ -459,18 +437,9 @@ sleep 5
 MouseGetPos, , , Window, classNN
 WinGetClass, class, ahk_id %Window%
 
-;tooltip, 2 - ahk_class =   %class% `nClassNN =     %classNN% `nTitle= %Window%
-
-;;;note to self, I think ControlGetPos is not affected by coordmode??  Or at least, it gave me the wrong coordinates if premiere is not fullscreened... IDK. https://autohotkey.com/docs/commands/ControlGetPos.htm
 
 ControlGetPos, XX, YY, Width, Height, %classNN%, ahk_class %class%, SubWindow, SubWindow 
 
-;note to self, I tried to exclude subwindows but I don't think it works...?
-;;my results:  59, 1229, 252, 21,     Edit1,     ahk_class Premiere Pro
-;tooltip, classNN = %classNN%
-
-;;Now we have found a lot of useful information about this find box. Turns out, we don't need most of it...
-;;we just need the X and Y coordinates of the "upper left" corner...
 
 ;;Comment in the following line to get a message box of your current variable values. The script will not advance until you dismiss a message box. (Use the enter key.)
 ;MsgBox, xx=%XX% yy=%YY%
@@ -487,7 +456,7 @@ sleep 5
 
 MouseMove, XX+20, YY+200, 0 ;--------------------for 100% UI scaling, this moves the cursor onto the magnifying glass
 
-preset("goprorec709")
+preset(item)
 sleep 5
 
 MouseMove, xposP, yposP ;------------------stores the cursor's current coordinates at X%xposP% Y%yposP%
@@ -496,7 +465,7 @@ MouseMove, xposP, yposP ;------------------stores the cursor's current coordinat
 blockinput, MouseMoveOff ;returning mouse movement ability
 BlockInput, off ;do not comment out or delete this line -- or you won't regain control of the keyboard!! However, CTRL ALT DELETE will still work if you get stuck!! Cool.
 
-goproending:
+presetSorgenteEnd:
 }
 ;END of preset(). The two lines above this one are super important.
 
@@ -630,7 +599,7 @@ clipboard:="Z:\Editing\Assets\Artlist.io\Artlist_Fede\FerrariRoma" ;copy variabl
 Sendinput, ^+9
 sleep 5
 
-Sendinput, ^b
+Sendinput, ^è
 sleep 5
 
 Sendinput, Music
@@ -651,15 +620,15 @@ Send {enter}
 sleep 150
 
 Send {Tab}
-sleep 150
+sleep 250
 Send {Tab}
-sleep 150
+sleep 250
 Send {Tab}
-sleep 150
+sleep 250
 Send {Tab}
-sleep 200
+sleep 250
 Send {Tab}
-sleep 150
+sleep 250
 
 Send {Down}
 sleep 5
@@ -729,9 +698,6 @@ projsetupend:
 
 searchEffect(){
 keywait, %A_PriorHotKey% 
-
-
-
 
 sendinput, {blind}{SC0EC} ;for debugging. YOU DO NOT NEED THIS.
 ;Keyshower(item,"preset") ;YOU DO NOT NEED THIS. -- it simply displays keystrokes on the screen for the sake of tutorials...
@@ -826,6 +792,100 @@ searchEnd:
 }
 
 
+searchProj(){
+keywait, %A_PriorHotKey% 
+
+sendinput, {blind}{SC0EC} ;for debugging. YOU DO NOT NEED THIS.
+;Keyshower(item,"preset") ;YOU DO NOT NEED THIS. -- it simply displays keystrokes on the screen for the sake of tutorials...
+; if IsFunc("Keyshower")
+	; {
+	; Func := Func("Keyshower")
+	; RetVal := Func.Call(item,"preset") 
+	; }
+ifWinNotActive ahk_exe Adobe Premiere Pro.exe ;the exe is more reliable than the class, since it will work even if you're not on the primary Premiere window.
+	{
+	goto searchProjEnd ;and this line is here just in case the function is called while not inside premiere. In my case, this is because of my secondary keyboards, which aren't usually using #ifwinactive in addition to #if getKeyState(whatever). Don't worry about it.
+	}
+;;---------You do not need the stuff ABOVE this line.--------------
+
+
+;Setting the coordinate mode is really important. This ensures that pixel distances are consistant for everything, everywhere.
+; https://www.autohotkey.com/docs/commands/CoordMode.htm
+coordmode, pixel, Window
+coordmode, mouse, Window
+coordmode, Caret, Window
+
+;This (temporarily) blocks the mouse and keyboard from sending any information, which could interfere with the funcitoning of the script.
+
+BlockInput, On
+;The mouse will be unfrozen at the end of this function. Note that if you do get stuck while debugging this or any other function, CTRL SHIFT ESC will allow you to regain control of the mouse. You can then end the AHK script from the Task Manager.
+
+SetKeyDelay, 0 ;NO DELAY BETWEEN STUFF sent using the "send"command! I thought it might actually be best to put this at "1," but using "0" seems to work perfectly fine.
+; https://www.autohotkey.com/docs/commands/SetKeyDelay.htm
+
+
+Sendinput, ^!+k ;in Premiere's shortcuts panel, ASSIGN "shuttle stop" to CTRL ALT SHIFT K.
+sleep 10
+Sendinput, ^!+k ; another shortcut for Shuttle Stop. Sometimes, just one is not enough.
+;so if the video is playing, this will stop it. Othewise, it can mess up the script.
+sleep 5
+
+
+
+
+Sendinput, ^+!9 ;CTRL SHIFT ALT 7 --- In Premiere's Keyboard Shortcuts panel, you nust find the "Effects" panel and assign the shortcut CTRL SHIFT ALT 7 to it. (The default shortcut is SHIFT 7. Because Premiere does allow multiple shortcuts per command, you can keep SHIFT 7 as well, or you can delete it. I have deleted it.)
+sleep 12
+Sendinput, ^!+9 ;you must send this shortcut again, because there are some edge cases where it may not have worked the first time.
+
+sleep 5
+Sendinput, ^b ;CTRL B ------- set in premiere's shortcuts panel to "select find box"
+sleep 5
+;Alternatively, it also works to click on the magnifying glass if you wish to select the find box... but this is unnecessary and sloppy.
+
+;The Effects panel's find box should now be activated.
+;If there is text contained inside, it has now been highlighted. There is also a blinking vertical line at the end of any text, which is called the "text insertion point", or "caret".
+
+if (A_CaretX = "")
+{
+;No Caret (blinking vertical line) can be found.
+
+;The following loop is waiting until it sees the caret. THIS IS SUPER IMPORTANT, because Premiere is sometimes quite slow to actually select the find box, and if the function tries to proceed before that has happened, it will fail. This would happen to me about 10% of the time.
+;Using the loop is also way better than just ALWAYS waiting 60 milliseconds like I was before. With the loop, this function can continue as soon as Premiere is ready.
+
+;sleep 60 ;<—Use this line if you don't want to use the loop below. But the loop should work perfectly fine as-is, without any modification from you.
+
+waiting2 = 0
+loop
+	{
+	waiting2 ++
+	sleep 33
+	tooltip, counter = (%waiting2% * 33)`nCaret = %A_CaretX%
+	if (A_CaretX <> "")
+		{
+		tooltip, CARET WAS FOUND
+		break
+		}
+	if (waiting2 > 40)
+		{
+		tooltip, FAIL - no caret found. `nIf your cursor will not move`, hit the button to call the preset() function again.`nTo remove this tooltip`, refresh the script using its icon in the taskbar.`n`nIt's possible Premiere tried to AUTOSAVE at just the wrong moment!
+		;Note to self, need much better way to debug this than screwing the user. As it stands, that tooltip will stay there forever.
+		;USER: Running the function again, or reloading the script, will remove that tooltip.
+		;sleep 200
+		;tooltip,
+		sleep 20
+		GOTO searchProjEnd
+		}
+	}
+sleep 1
+tooltip,
+}
+
+sendinput, {Delete}
+
+
+BlockInput, off
+searchProjEnd:
+}
 
 ;;BLENDER STUFF
 
