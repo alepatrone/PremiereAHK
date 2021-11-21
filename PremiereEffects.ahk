@@ -24,6 +24,7 @@ F21::preset("lumetri v-log pro")
 F22::preset("lumetri Cine-D Athena")
 F23::preset("GoPro FX Reframe Preset")
 F24::presetSorgente("flip sottosopra")
+^F13::preset("saturazione 120 handycam")
 
 ^+F::nidifica()
 ^space::searchEffect()
@@ -323,7 +324,7 @@ sleep 5
 Send {enter}
 sleep 5
 Send {enter}
-sleep 30
+sleep 100
 
 MouseMove, xposP, yposP ;--------------------for 100% UI scaling, this moves the cursor onto the magnifying glass
 sleep 5
@@ -510,6 +511,9 @@ SetKeyDelay, 0 ;NO DELAY BETWEEN STUFF sent using the "send"command! I thought i
 ; https://www.autohotkey.com/docs/commands/SetKeyDelay.htm
 
 
+Sendinput, ^+1
+sleep 10
+
 Sendinput, ^+9 ;in Premiere's shortcuts panel, ASSIGN "shuttle stop" to CTRL ALT SHIFT K.
 sleep 10
 Sendinput, ^!9 ; another shortcut for Shuttle Stop. Sometimes, just one is not enough.
@@ -534,9 +538,7 @@ Send {Down}
 Send {Down}
 Send {Down}
 Send {Down}
-Send {Down}
-Send {Down}
-sleep 5
+sleep 50
 Send {enter}
 sleep 5
 Send {enter}
@@ -984,7 +986,7 @@ WinClose
 sleep 60
 
 
-run, "D:\Documenti\Download\blender-3.0.0-alpha+cycles-x.ce865d3f721f-windows.amd64-release\blender.exe"
+run, "D:\Documenti\Download\blender-3.0.0-alpha+cycles-x.41ce217d3ce9-windows.amd64-release\blender.exe"
 sleep 5000
 
 
@@ -1064,3 +1066,61 @@ Reload
 Return
 
 
+#ifWinActive
+
+;;BLUETOOTH
+
+^!B::bluetooth()
+
+
+bluetooth(){
+keywait, %A_PriorHotKey% 
+
+
+BlockInput, SendAndMouse
+BlockInput, MouseMove
+BlockInput, On
+
+sendinput, {blind}{SC0EC}
+
+
+Send, #r
+sleep 100
+Sendinput, ms-settings:bluetooth
+sleep 100
+Sendinput, {Enter}
+sleep 500
+CoordMode,Mouse,Screen
+    WinGetPos, winTopL_x, winTopL_y, width, height, A
+    winCenter_x := winTopL_x + width/2
+    winCenter_y := winTopL_y + height/2
+    ;MouseMove, X, Y, 0 ; does not work with multi-monitor
+    DllCall("SetCursorPos", int, winTopL_x, int, winTopL_y)
+
+sleep 5
+
+MouseMove, winTopL_x+650, winTopL_y+520, 0 
+sleep 1500
+MouseClick,WheelDown,,,1,0,D,R
+sleep 300
+;MouseClick, left, , , 1 
+;sleep 15
+MouseMove, winTopL_x+650, winTopL_y+620, 0 
+sleep 15
+MouseClick, left, , , 1 
+sleep 15
+MouseMove, winTopL_x+650, winTopL_y+680, 0 
+sleep 15
+
+MouseClick, left, , , 1
+sleep 5
+Sendinput, !{F4}
+
+blockinput, MouseMoveOff ;returning mouse movement ability
+BlockInput, off ;do not comment out or delete this line -- or you won't regain control of the keyboard!! However, CTRL ALT DELETE will still work if you get stuck!! Cool.
+
+
+
+
+
+}
