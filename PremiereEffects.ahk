@@ -26,6 +26,7 @@ F23::preset("GoPro FX Reframe Preset")
 F24::presetSorgente("flip sottosopra")
 ^F13::preset("saturazione 120 handycam")
 
+^+V::pasteEffects()
 ^+F::nidifica()
 ^space::searchEffect()
 ^+space::searchProj()
@@ -340,6 +341,52 @@ removeEffectsEnding:
 ;END of removeEffects(). The two lines above this one are super important.
 
 
+pasteEffects()
+{
+
+keywait, %A_PriorHotKey% 
+
+sendinput, {blind}{SC0EC} ;for debugging. YOU DO NOT NEED THIS.
+
+ifWinNotActive ahk_exe Adobe Premiere Pro.exe ;the exe is more reliable than the class, since it will work even if you're not on the primary Premiere window.
+	{
+	goto pasteEffectsEnd ;and this line is here just in case the function is called while not inside premiere. In my case, this is because of my secondary keyboards, which aren't usually using #ifwinactive in addition to #if getKeyState(whatever). Don't worry about it.
+}
+
+
+;Setting the coordinate mode is really important. This ensures that pixel distances are consistant for everything, everywhere.
+
+coordmode, pixel, Window
+coordmode, mouse, Window
+coordmode, Caret, Window
+
+;This (temporarily) blocks the mouse and keyboard from sending any information, which could interfere with the funcitoning of the script.
+BlockInput, SendAndMouse
+BlockInput, MouseMove
+BlockInput, On
+;The mouse will be unfrozen at the end of this function. Note that if you do get stuck while debugging this or any other function, CTRL SHIFT ESC will allow you to regain control of the mouse. You can then end the AHK script from the Task Manager.
+
+SetKeyDelay, 0 ;NO DELAY BETWEEN STUFF sent using the "send"command! I thought it might actually be best to put this at "1," but using "0" seems to work perfectly fine.
+; https://www.autohotkey.com/docs/commands/SetKeyDelay.htm
+
+
+
+MouseClick, right
+sleep 5
+Sendinput, {Down}
+Sendinput, {Down}
+Sendinput, {Down}
+Sendinput, {enter}
+sleep 15
+Sendinput, {enter}
+
+
+blockinput, MouseMoveOff ;returning mouse movement ability
+BlockInput, off ;do not comment out or delete this line -- or you won't regain control of the keyboard!! However, CTRL ALT DELETE will still work if you get stuck!! Cool.
+
+
+pasteEffectsEnd:
+}
 nidifica(){
 keywait, %A_PriorHotKey% ;keywait is quite important.
 
@@ -529,6 +576,8 @@ Send {Down}
 sleep 5
 Send {Right}
 sleep 5
+Send {Down}
+Send {Down}
 Send {Down}
 Send {Down}
 Send {Down}
@@ -1099,28 +1148,25 @@ CoordMode,Mouse,Screen
 
 sleep 5
 
-MouseMove, winTopL_x+650, winTopL_y+520, 0 
+MouseMove, winTopL_x+1145, winTopL_y+775, 0 
 sleep 1500
-MouseClick,WheelDown,,,1,0,D,R
-sleep 300
-;MouseClick, left, , , 1 
-;sleep 15
-MouseMove, winTopL_x+650, winTopL_y+620, 0 
-sleep 15
+;MouseClick,WheelDown,,,1,0,D,R
+;sleep 300
 MouseClick, left, , , 1 
 sleep 15
-MouseMove, winTopL_x+650, winTopL_y+680, 0 
+;MouseMove, winTopL_x+650, winTopL_y+620, 0 
+MouseMove, winTopL_x+1145, winTopL_y+700, 0 
+sleep 50
+MouseClick, left, , , 1 
 sleep 15
+;MouseMove, winTopL_x+650, winTopL_y+680, 0 
+;sleep 15
 
-MouseClick, left, , , 1
+;;;;;;;MouseClick, left, , , 1
 sleep 5
 Sendinput, !{F4}
 
 blockinput, MouseMoveOff ;returning mouse movement ability
 BlockInput, off ;do not comment out or delete this line -- or you won't regain control of the keyboard!! However, CTRL ALT DELETE will still work if you get stuck!! Cool.
-
-
-
-
 
 }
