@@ -12,7 +12,7 @@ SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
 
 F4::removeEffects()
 F14::preset("eq audio")
-F13::preset("zoom cam w/ border")
+F13::preset("indy500 border")
 F15::preset("stabilizzatore alterazione 18")
 F6::preset("stabilizzatore alterazione 18")
 F16::presetSorgente("goprorec709")
@@ -25,6 +25,7 @@ F22::preset("lumetri Cine-D Athena")
 F23::preset("GoPro FX Reframe Preset")
 F24::presetSorgente("flip sottosopra")
 ^F13::preset("saturazione 120 handycam")
+^F14::preset("marzacam")
 
 ^+V::pasteEffects()
 ^+F::nidifica()
@@ -733,6 +734,8 @@ Send {Tab}
 sleep 15
 Send {Tab}
 sleep 5
+Send {Tab}
+sleep 5
 Send {enter}
 
 */
@@ -1169,4 +1172,84 @@ Sendinput, !{F4}
 blockinput, MouseMoveOff ;returning mouse movement ability
 BlockInput, off ;do not comment out or delete this line -- or you won't regain control of the keyboard!! However, CTRL ALT DELETE will still work if you get stuck!! Cool.
 
+}
+
+^!F14::folderColor("default")
+^!F15::folderColor("red")
+
+folderColor(color){
+keywait, %A_PriorHotKey% 
+
+
+BlockInput, SendAndMouse
+BlockInput, MouseMove
+BlockInput, On
+
+sendinput, {blind}{SC0EC}
+
+Send {enter}
+sleep 50
+Send ^l
+
+Send ^c
+sleep 50
+Send {enter}
+sleep 10
+Send !{Up}
+sleep 5
+
+
+Switch color
+{
+
+case "red":
+
+Run, "C:\Users\Alessandro\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\FolderMarker.lnk"
+	sleep 800
+	Send {tab}
+	Send {tab}
+	Send {tab}
+	Send {right}
+	sleep 5
+	Send {tab}
+	sleep 10
+	Send ^v
+	Send {tab}
+	Send {enter}
+	sleep 50
+
+case "default":
+
+	Run, "C:\Users\Alessandro\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\FolderMarker.lnk"
+	sleep 800
+	Send {tab}
+	Send {tab}
+	Send {tab}
+	Send {tab}
+	sleep 5
+	Send ^v
+	Send {tab}
+	Send {enter}
+	sleep 50
+
+default:
+
+
+	Run, "C:\Users\Alessandro\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\FolderMarker.lnk"
+	sleep 800
+	Send {tab}
+	Send {tab}
+	Send {tab}
+	Send {tab}
+	sleep 5
+	Send ^v
+	Send {tab}
+	Send {enter}
+	sleep 50
+}
+
+Sendinput, !{F4}
+
+blockinput, MouseMoveOff ;returning mouse movement ability
+BlockInput, off ;do not comment out or delete this line -- or you won't regain control of the keyboard!! However, CTRL ALT DELETE will still work if you get stuck!! Cool.
 }
