@@ -11,8 +11,8 @@ SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
 
 
 F4::removeEffects()
-F14::preset("eq audio")
-F13::preset("indy500 border")
+F13::preset("indy500")
+F14::preset("eq audio bassi")
 F15::preset("stabilizzatore alterazione 18")
 F6::preset("stabilizzatore alterazione 18")
 F16::presetSorgente("goprorec709")
@@ -26,6 +26,8 @@ F23::preset("GoPro FX Reframe Preset")
 F24::presetSorgente("flip sottosopra")
 ^F13::preset("saturazione 120 handycam")
 ^F14::preset("marzacam")
+^F15::preset("trasformazione 180")
+^F16::preset("specchietto pos")
 
 ^+V::pasteEffects()
 ^+F::nidifica()
@@ -658,6 +660,7 @@ Sendinput, Music
 sleep 5
 
 
+
 Sendinput, ^i
 sleep 300
 
@@ -679,16 +682,18 @@ Send {Tab}
 sleep 250
 Send {Tab}
 sleep 250
-Send {Tab}
-sleep 250
+
 
 Send {Down}
 sleep 5
 
 Send {enter}
 sleep 1200
+
 Send {enter}
 sleep 5
+
+
 
 Send {enter}
 sleep 5
@@ -737,6 +742,8 @@ sleep 5
 Send {Tab}
 sleep 5
 Send {enter}
+sleep 100
+
 
 */
 
@@ -1249,6 +1256,113 @@ default:
 }
 
 Sendinput, !{F4}
+
+blockinput, MouseMoveOff ;returning mouse movement ability
+BlockInput, off ;do not comment out or delete this line -- or you won't regain control of the keyboard!! However, CTRL ALT DELETE will still work if you get stuck!! Cool.
+}
+
+
+^!+G::goxlrPlugin()
+
+goxlrPlugin(){
+keywait, %A_PriorHotKey% 
+sendinput, {blind}{SC0EC}
+
+BlockInput, SendAndMouse
+BlockInput, MouseMove
+BlockInput, On
+
+
+Run, "C:\Program Files (x86)\TC-Helicon\GOXLR\GoXLR App.exe"
+
+
+sleep 1000
+CoordMode,Mouse,Screen
+    WinGetPos, winTopL_x, winTopL_y, width, height, A
+    winCenter_x := winTopL_x + width/2
+    winCenter_y := winTopL_y + height/2
+    ;MouseMove, X, Y, 0 ; does not work with multi-monitor
+    DllCall("SetCursorPos", int, winTopL_x, int, winTopL_y)
+
+
+sleep 5
+
+
+;CLICK CONNECT TO STREAM DECK BOTTOM RIGHT
+MouseMove, winTopL_x+1600, winTopL_y+1010, 0 
+sleep 5
+
+MouseClick, left, , , 1 
+sleep 15
+
+;OK MIDDLE
+MouseMove, winTopL_x+960, winTopL_y+560, 0 
+sleep 150
+
+MouseClick, left, , , 1 
+sleep 15
+
+;CLOSE
+MouseMove, winTopL_x+1900, winTopL_y+10, 0 
+sleep 5
+
+MouseClick, left, , , 1 
+sleep 15
+
+
+;MINIMIZE TO TRAY
+MouseMove, winTopL_x+960, winTopL_y+590, 0 
+sleep 50
+
+MouseClick, left, , , 1 
+sleep 15
+
+
+
+
+
+
+blockinput, MouseMoveOff ;returning mouse movement ability
+BlockInput, off ;do not comment out or delete this line -- or you won't regain control of the keyboard!! However, CTRL ALT DELETE will still work if you get stuck!! Cool.
+
+}
+
+
+
+;TEMPORARY FIX FOR CRTL+L in Files
+
+#IfWinActive ahk_exe ApplicationFrameHost.exe
+
+
+^L::searchbarFiles()
+
+searchbarFiles(){
+
+keywait, %A_PriorHotKey% 
+sendinput, {blind}{SC0EC}
+
+BlockInput, SendAndMouse
+BlockInput, MouseMove
+BlockInput, On
+
+
+CoordMode,Mouse,Screen
+    WinGetPos, winTopL_x, winTopL_y, width, height, A
+    winCenter_x := winTopL_x + width/2
+    winCenter_y := winTopL_y + height/2
+    ;MouseMove, X, Y, 0 ; does not work with multi-monitor
+    DllCall("SetCursorPos", int, winTopL_x, int, winTopL_y)
+
+
+sleep 5
+
+
+;Move to bar
+MouseMove, winTopL_x+1150, winTopL_y+80, 0 
+sleep 5
+
+MouseClick, left, , , 1 
+sleep 15
 
 blockinput, MouseMoveOff ;returning mouse movement ability
 BlockInput, off ;do not comment out or delete this line -- or you won't regain control of the keyboard!! However, CTRL ALT DELETE will still work if you get stuck!! Cool.
