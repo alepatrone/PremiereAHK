@@ -1364,6 +1364,7 @@ sleep 5
 MouseClick, left, , , 1 
 sleep 15
 
+
 blockinput, MouseMoveOff ;returning mouse movement ability
 BlockInput, off ;do not comment out or delete this line -- or you won't regain control of the keyboard!! However, CTRL ALT DELETE will still work if you get stuck!! Cool.
 }

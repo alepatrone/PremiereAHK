@@ -28,6 +28,7 @@ F24::presetSorgente("flip sottosopra")
 ^F14::preset("marzacam")
 ^F15::preset("trasformazione 180")
 ^F16::preset("specchietto pos")
+^F17::insta360lockFix()
 
 ^+V::pasteEffects()
 ^+F::nidifica()
@@ -684,6 +685,8 @@ Send {Tab}
 sleep 250
 
 
+
+
 Send {Down}
 sleep 5
 
@@ -948,6 +951,107 @@ BlockInput, off
 searchProjEnd:
 }
 
+insta360lockFix()
+{
+
+keywait, %A_PriorHotKey% ;keywait is quite important.
+;Let's pretend that you called this function using the following line:
+;F4::preset("crop 50")
+;In that case, F4 is the prior hotkey, and the script will WAIT until F4 has been physically RELEASED (up) before it will continue. 
+;https://www.autohotkey.com/docs/commands/KeyWait.htm
+;Using keywait is probably WAY cleaner than allowing the physical key UP event to just happen WHENEVER during the following function, which can disrupt commands like sendinput, and cause cross-talk with modifier keys.
+
+
+;;---------You do not need the stuff BELOW this line.--------------
+
+sendinput, {blind}{SC0EC} ;for debugging. YOU DO NOT NEED THIS.
+
+ifWinNotActive ahk_exe Adobe Premiere Pro.exe ;the exe is more reliable than the class, since it will work even if you're not on the primary Premiere window.
+	{
+	goto insta360lockfixEND ;and this line is here just in case the function is called while not inside premiere. In my case, this is because of my secondary keyboards, which aren't usually using #ifwinactive in addition to #if getKeyState(whatever). Don't worry about it.
+	}
+;;---------You do not need the stuff ABOVE this line.--------------
+
+
+;Setting the coordinate mode is really important. This ensures that pixel distances are consistant for everything, everywhere.
+; https://www.autohotkey.com/docs/commands/CoordMode.htm
+coordmode, pixel, Window
+coordmode, mouse, Window
+coordmode, Caret, Window
+
+
+BlockInput, SendAndMouse
+BlockInput, MouseMove
+BlockInput, On
+
+
+SetKeyDelay, 0 ;NO DELAY BETWEEN STUFF sent using the "send"command! I thought it might actually be best to put this at "1," but using "0" seems to work perfectly fine.
+; https://www.autohotkey.com/docs/commands/SetKeyDelay.htm
+
+
+MouseGetPos, xposP, yposP ;------------------stores the cursor's current coordinates at X%xposP% Y%yposP%
+;KEEP IN MIND that this function should only be called when your cursor is hovering over a clip, or a group of selected clips, on the timeline. That's because the cursor will be returned to that exact location, carrying the desired preset, which it will drop there. MEANING, that this function won't work if you select clips, but don't have the cursor hovering over them.
+
+sendinput, {mButton} ;this will MIDDLE CLICK to bring focus to the panel underneath the cursor (which must be the timeline). I forget exactly why, but if you create a nest, and immediately try to apply a preset to it, it doesn't work, because the timeline wasn't in focus...? Or something. IDK.
+sleep 5
+
+;prFocus("effects") ;Brings focus to the effects panel. You must find, then copy/paste the prFocus() function definition into your own .ahk script as well. ALTERNATIVELY, if you don't want to do that, you can delete this line, and "comment in" the 3 lines below:
+
+
+sendinput, {blind}{SC0EC} ;for debugging. YOU DO NOT NEED THIS LINE.
+
+sleep 15 ;"sleep" means the script will wait for 15 milliseconds before the next command. This is done to give Premiere some time to load its own things.
+
+
+loop 3
+{
+
+MouseClick, right
+sleep 50
+
+Send {Down}
+Send {Down}
+Send {Down}
+Send {Down}
+Send {Down}
+Send {Down}
+Send {Down}
+Send {Down}
+Send {Down}
+Send {Down}
+Send {Down}
+sleep 5
+Send {enter}
+sleep 500
+Send {Tab}
+Send {Tab}
+sleep 5
+Send {Space}
+sleep 50
+Send {Tab}
+Send {Tab}
+Send {Tab}
+sleep 5
+Send {enter}
+sleep 500
+}
+
+
+MouseMove, xposP, yposP ;--------------------for 100% UI scaling, this moves the cursor onto the magnifying glass
+sleep 5
+
+MouseClick, middle, , , 1 ;this returns focus to the panel the cursor is hovering above, WITHOUT selecting anything. great! And now timeline shortcuts like JKL will work.
+
+blockinput, MouseMoveOff ;returning mouse movement ability
+BlockInput, off ;do not comment out or delete this line -- or you won't regain control of the keyboard!! However, CTRL ALT DELETE will still work if you get stuck!! Cool.
+
+
+insta360lockfixEND:
+}
+;END of insta360lockFix(). The two lines above this one are super important.
+
+
+
 ;;BLENDER STUFF
 
 #IfWinActive ahk_exe blender.exe
@@ -1116,6 +1220,8 @@ cyclesXEND:
 
 
 
+
+
 #ifwinactive ahk_class Notepad++
 ^r::
 send ^s
@@ -1272,8 +1378,12 @@ BlockInput, SendAndMouse
 BlockInput, MouseMove
 BlockInput, On
 
+MouseGetPos, xposP, yposP ;------------------stores the cursor's current coordinates at X%xposP% Y%yposP%
+
 
 Run, "C:\Program Files (x86)\TC-Helicon\GOXLR\GoXLR App.exe"
+
+
 
 
 sleep 1000
@@ -1318,7 +1428,7 @@ MouseClick, left, , , 1
 sleep 15
 
 
-
+MouseMove, xposP, yposP
 
 
 
@@ -1364,7 +1474,7 @@ sleep 5
 MouseClick, left, , , 1 
 sleep 15
 
-
 blockinput, MouseMoveOff ;returning mouse movement ability
 BlockInput, off ;do not comment out or delete this line -- or you won't regain control of the keyboard!! However, CTRL ALT DELETE will still work if you get stuck!! Cool.
 }
+
