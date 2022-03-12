@@ -1022,18 +1022,18 @@ Send {Down}
 Send {Down}
 sleep 5
 Send {enter}
-sleep 500
+sleep 1000
 Send {Tab}
 Send {Tab}
-sleep 5
+sleep 10
 Send {Space}
 sleep 50
 Send {Tab}
 Send {Tab}
 Send {Tab}
-sleep 5
+sleep 10
 Send {enter}
-sleep 500
+sleep 800
 }
 
 
