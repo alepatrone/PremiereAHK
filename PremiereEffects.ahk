@@ -1050,8 +1050,6 @@ insta360lockfixEND:
 }
 ;END of insta360lockFix(). The two lines above this one are super important.
 
-
-
 ;;BLENDER STUFF
 
 #IfWinActive ahk_exe blender.exe
@@ -1289,6 +1287,8 @@ BlockInput, off ;do not comment out or delete this line -- or you won't regain c
 
 ^!F14::folderColor("default")
 ^!F15::folderColor("red")
+^!F16::folderColorMenu("default")
+^!F17::folderColorMenu("red")
 
 folderColor(color){
 keywait, %A_PriorHotKey% 
@@ -1366,6 +1366,105 @@ Sendinput, !{F4}
 blockinput, MouseMoveOff ;returning mouse movement ability
 BlockInput, off ;do not comment out or delete this line -- or you won't regain control of the keyboard!! However, CTRL ALT DELETE will still work if you get stuck!! Cool.
 }
+
+folderColorMenu(color){
+keywait, %A_PriorHotKey% 
+
+
+BlockInput, SendAndMouse
+BlockInput, MouseMove
+BlockInput, On
+
+sendinput, {blind}{SC0EC}
+
+
+
+Switch color
+{
+
+case "red":
+
+	Send +{F10}
+	sleep 50
+	Send {Down}
+	Send {Down}
+	Send {Down}
+	Send {Down}
+	Send {Down}
+	Send {Down}
+	Send {Down}
+	Send {Down}
+	Send {Down}
+	Send {Down}
+	Send {Down}
+	Send {Down}
+	Send {Down}
+	Send {Down}
+	Send {Down}
+	Send {Down}
+	Send {Down}
+	sleep 5
+	Send {right}
+	Send {right}
+	sleep 5
+	Send {Up}
+	Send {Up}
+	Send {Up}
+	Send {Up}
+	sleep 5
+	Send {right}
+	sleep 5
+	Send {enter}
+
+case "default":
+	Send +{F10}
+	sleep 50
+	Send {Down}
+	Send {Down}
+	Send {Down}
+	Send {Down}
+	Send {Down}
+	Send {Down}
+	Send {Down}
+	Send {Down}
+	Send {Down}
+	Send {Down}
+	Send {Down}
+	Send {Down}
+	Send {Down}
+	Send {Down}
+	Send {Down}
+	Send {Down}
+	Send {Down}
+	sleep 5
+	Send {right}
+	Send {right}
+	sleep 5
+	Send {Up}
+	Send {Up}
+	sleep 5
+	Send {enter}
+
+default:
+
+
+	Run, "C:\Users\Alessandro\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\FolderMarker.lnk"
+	sleep 800
+	Send {tab}
+	Send {tab}
+	Send {tab}
+	Send {tab}
+	sleep 5
+	Send ^v
+	Send {tab}
+	Send {enter}
+	sleep 50
+}
+
+blockinput, MouseMoveOff ;returning mouse movement ability
+BlockInput, off ;do not comment out or delete this line -- or you won't regain control of the keyboard!! However, CTRL ALT DELETE will still work if you get stuck!! Cool.
+}
+
 
 
 ^!+G::goxlrPlugin()
