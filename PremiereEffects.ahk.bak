@@ -30,6 +30,8 @@ F24::presetSorgente("flip sottosopra")
 ^F15::preset("trasformazione 180")
 ^F16::preset("specchietto pos")
 ^F17::insta360lockFix()
+^F18::preset("SLOG_Fede")
+
 
 ^+V::pasteEffects()
 ^+F::nidifica()
@@ -1506,10 +1508,15 @@ MouseClick, left, , , 1
 sleep 15
 
 ;OK MIDDLE
-MouseMove, winTopL_x+960, winTopL_y+560, 0 
+;MouseMove, winTopL_x+960, winTopL_y+560, 0 
+;sleep 150
+
+;MouseClick, left, , , 1 
+;sleep 15
 sleep 150
 
-MouseClick, left, , , 1 
+Sendinput {Esc}
+
 sleep 15
 
 ;CLOSE
@@ -1544,7 +1551,7 @@ BlockInput, off ;do not comment out or delete this line -- or you won't regain c
 #IfWinActive ahk_exe ApplicationFrameHost.exe
 
 
-^L::searchbarFiles()
+;;^L::searchbarFiles()
 
 searchbarFiles(){
 
