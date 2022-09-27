@@ -10,7 +10,9 @@ SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
 #IfWinActive ahk_exe Adobe Premiere Pro.exe
 
 
-F4::removeEffects()
+;F4::removeEffects()
+
+F3::removeEffectsEmbedded()
 F13::preset("indy500")
 F14::preset("eq audio bassi")
 F15::preset("stabilizzatore alterazione 18")
@@ -26,14 +28,14 @@ F22::preset("lumetri Cine-D Athena")
 F23::preset("GoPro FX Reframe Preset")
 F24::presetSorgente("flip sottosopra")
 ^F13::preset("saturazione 120 handycam")
-^F14::preset("marzacam")
+^F14::preset("reframe automatico")
 ^F15::preset("trasformazione 180")
 ^F16::preset("specchietto pos")
 ^F17::insta360lockFix()
-^F18::preset("SLOG_Fede")
+^F18::preset("rodeaudiopreset")
 
 
-^+V::pasteEffects()
+;^+V::pasteEffects()
 ^+F::nidifica()
 ^space::searchEffect()
 ^+space::searchProj()
@@ -185,7 +187,7 @@ Sendinput, %item%
 sleep 5
 
 ;MouseMove, 62, 95, 0, R ;----------------------(for 150% UI.)
-MouseMove, 41, 63, 0, R ;----------------------(for 100% UI)
+MouseMove, 45, 82, 0, R ;----------------------(for 100% UI)
 ;;relative to the position of the magnifying glass (established earlier,) this moves the cursor down and directly onto the preset's icon.
 
 ;;In my case, all of my presets are contained inside of folders, which themselves are inside the "presets" folder. Your preset's written name should be completely unique so that it is the first and only item.
@@ -347,6 +349,54 @@ removeEffectsEnding:
 }
 ;END of removeEffects(). The two lines above this one are super important.
 
+removeEffectsEmbedded()
+{
+
+keywait, %A_PriorHotKey% ;keywait is quite important.
+;Let's pretend that you called this function using the following line:
+;F4::preset("crop 50")
+;In that case, F4 is the prior hotkey, and the script will WAIT until F4 has been physically RELEASED (up) before it will continue. 
+;https://www.autohotkey.com/docs/commands/KeyWait.htm
+;Using keywait is probably WAY cleaner than allowing the physical key UP event to just happen WHENEVER during the following function, which can disrupt commands like sendinput, and cause cross-talk with modifier keys.
+
+
+;;---------You do not need the stuff BELOW this line.--------------
+
+ifWinNotActive ahk_exe Adobe Premiere Pro.exe ;the exe is more reliable than the class, since it will work even if you're not on the primary Premiere window.
+	{
+	goto removeEffectsEmbEnding ;and this line is here just in case the function is called while not inside premiere. In my case, this is because of my secondary keyboards, which aren't usually using #ifwinactive in addition to #if getKeyState(whatever). Don't worry about it.
+	}
+;;---------You do not need the stuff ABOVE this line.--------------
+
+
+
+;This (temporarily) blocks the mouse and keyboard from sending any information, which could interfere with the funcitoning of the script.
+BlockInput, SendAndMouse
+BlockInput, MouseMove
+BlockInput, On
+;The mouse will be unfrozen at the end of this function. Note that if you do get stuck while debugging this or any other function, CTRL SHIFT ESC will allow you to regain control of the mouse. You can then end the AHK script from the Task Manager.
+
+SetKeyDelay, 0 ;NO DELAY BETWEEN STUFF sent using the "send"command! I thought it might actually be best to put this at "1," but using "0" seems to work perfectly fine.
+; https://www.autohotkey.com/docs/commands/SetKeyDelay.htm
+
+
+;msgbox, ahk_class =   %class% `nClassNN =     %classNN% `nTitle= %Window%
+;;This was my debugging to check if there are lingering variables from last time the script was run. You do not need that line.
+
+Send {F4}
+sleep 100
+Send {Space}
+
+MouseClick, middle, , , 1 ;this returns focus to the panel the cursor is hovering above, WITHOUT selecting anything. great! And now timeline shortcuts like JKL will work.
+
+blockinput, MouseMoveOff ;returning mouse movement ability
+BlockInput, off ;do not comment out or delete this line -- or you won't regain control of the keyboard!! However, CTRL ALT DELETE will still work if you get stuck!! Cool.
+
+
+removeEffectsEmbEnding:
+}
+;END of removeEffects(). The two lines above this one are super important.
+
 
 pasteEffects()
 {
@@ -386,7 +436,11 @@ Sendinput, {Down}
 Sendinput, {enter}
 sleep 15
 Sendinput, {enter}
+sleep 20
 
+SendEvent {Shift Up}
+SendEvent {Ctrl Up}
+SendEvent {Alt Up}
 
 blockinput, MouseMoveOff ;returning mouse movement ability
 BlockInput, off ;do not comment out or delete this line -- or you won't regain control of the keyboard!! However, CTRL ALT DELETE will still work if you get stuck!! Cool.
@@ -394,6 +448,7 @@ BlockInput, off ;do not comment out or delete this line -- or you won't regain c
 
 pasteEffectsEnd:
 }
+
 nidifica(){
 keywait, %A_PriorHotKey% ;keywait is quite important.
 
@@ -1236,7 +1291,7 @@ Return
 
 ;;BLUETOOTH
 
-^!B::bluetooth()
+;;^!B::bluetooth()
 
 
 bluetooth(){
