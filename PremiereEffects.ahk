@@ -13,14 +13,15 @@ SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
 ;F4::removeEffects()
 
 F3::removeEffectsEmbedded()
-F13::preset("indy500")
+F13::preset("trasformazioneREEL")
 F14::preset("eq audio bassi")
 F15::preset("stabilizzatore alterazione 18")
 F6::preset("stabilizzatore alterazione 18")
 F16::presetSorgente("goprodefaultcolor")
 F17::newAdjustmentLayer()
 F18::preset("black bars")
-F19::projSetup("Z:\Editing\FedericoLeo\LowerThirds")
+F19::preset("-6db")
+;F19::projSetup("Z:\Editing\FedericoLeo\LowerThirds")
 F20::preset("lumetri v-log athena")
 F21::preset("lumetri v-log pro")
 F22::preset("lumetri Cine-D Athena")
@@ -30,7 +31,7 @@ F24::presetSorgente("flip sottosopra")
 ^F13::preset("saturazione 120 handycam")
 ^F14::preset("reframe automatico")
 ^F15::preset("trasformazione 180")
-^F16::preset("specchietto pos")
+^F16::preset("trasformazionereel")
 ^F17::insta360lockFix()
 ^F18::preset("rodeaudiopreset")
 
@@ -459,12 +460,17 @@ ifWinNotActive ahk_exe Adobe Premiere Pro.exe ;the exe is more reliable than the
 	
 	SetKeyDelay, 0
 	
-	sendinput, {mButton} 
-	sleep 5
-
-	Sendinput, ^+F 
-	sendinput, {enter}
+	Sendinput, ^+F
+	
+	sleep 100
+	Sendinput, {Tab}
+	sleep 15
+	sendinput, {space}
 	sleep 5	
+	
+	SendEvent {Shift Up}
+	sleep 5
+	SendEvent {Ctrl Up}
 	
 nidificaEnding:
 }
@@ -1581,4 +1587,85 @@ BlockInput, off ;do not comment out or delete this line -- or you won't regain c
 
 }
 
+
+^!+F8::rotateVertical()
+
+rotateVertical(){
+keywait, %A_PriorHotKey% 
+
+
+run, "C:\AHK\dc_rotatemonitor\scripts\rotateVertical.bat"
+
+sleep 500
+
+;RunWait Spotify.exe, % A_AppData "\Spotify"
+if WinExist("ahk_exe Spotify.exe")
+{
+	WinActivate, ahk_exe Spotify.exe
+	WinWait, ahk_exe Spotify.exe
+	WinMove, ahk_exe Spotify.exe,, 1920, -920, 1080, 1104
+}
+
+
+sleep 10
+
+if WinExist("ahk_exe discord.exe")
+{
+	WinActivate, ak_exe discord.exe 
+	WinWait, ahk_exe Discord.exe
+	WinMove, ahk_exe Discord.exe,, 1920, 184, 1080, 1408
+}
+
+if WinExist("ahk_exe WhatsApp.exe")
+{
+	WinActivate, ahk_exe WhatsApp.exe
+	WinWait, ahk_exe WhatsApp.exe
+	WinMove, ahk_exe WhatsApp.exe,, 1920, 184, 1080, 1408
+}
+
+
+}
+
+^!+F9::rotateHorizontal()
+
+rotateHorizontal(){
+keywait, %A_PriorHotKey% 
+
+
+run, "C:\AHK\dc_rotatemonitor\scripts\rotateHorizontal.bat"
+
+sleep 500
+
+;RunWait Spotify.exe, % A_AppData "\Spotify"
+if WinExist("ahk_exe Spotify.exe")
+{
+	WinActivate, ahk_exe Spotify.exe
+	WinWait, ahk_exe Spotify.exe
+	WinMove, ahk_exe Spotify.exe,, 1920, 0, 1280, 1032
+}
+
+
+sleep 10
+
+if WinExist("ahk_exe discord.exe")
+{
+	WinActivate, ak_exe discord.exe 
+	WinWait, ahk_exe Discord.exe
+	WinMove, ahk_exe Discord.exe,, 3200, 0, 1280, 1032
+}
+
+sleep 10
+
+if WinExist("ahk_exe WhatsApp.exe")
+{
+	WinActivate, ahk_exe WhatsApp.exe
+	WinWait, ahk_exe WhatsApp.exe
+	WinMove, ahk_exe WhatsApp.exe,, 3200, 0, 1280, 1032
+}
+
+
+
+
+
+}
 
