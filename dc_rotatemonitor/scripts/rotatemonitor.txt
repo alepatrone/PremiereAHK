@@ -1,0 +1,4 @@
+dccmd.exe -monitor="\\.\DISPLAY2" -rotate=up -right 
+dccmd.exe  -monitor="\\.\DISPLAY1" -refresh=max
+
+dccmd.exe -monitor="\\.\DISPLAY2" -rotate=right -ty=-920
