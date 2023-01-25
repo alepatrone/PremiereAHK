@@ -1594,7 +1594,7 @@ rotateVertical(){
 keywait, %A_PriorHotKey% 
 
 
-run, "D:\Utility\dc_rotatemonitor\scripts\rotateVertical.bat"
+run, "C:\AHK\dc_rotatemonitor\scripts\rotateVertical.bat"
 
 sleep 500
 
