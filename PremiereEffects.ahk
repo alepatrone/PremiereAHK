@@ -32,7 +32,8 @@ F24::presetSorgente("flip sottosopra")
 ^F14::preset("reframe automatico")
 ^F15::preset("trasformazione 180")
 ^F16::preset("Cam Transform Border Anchor")
-^F17::insta360lockFix()
+^F17::preset("Reduce noise + sharpen 15")
+;^F17::insta360lockFix()
 ^F18::preset("rodeaudiopreset")
 
 

@@ -13,13 +13,13 @@ SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
 ;F4::removeEffects()
 
 F3::removeEffectsEmbedded()
-F13::preset("trasformazioneREEL")
+F13::preset("Cam Transform Border Pos")
 F14::preset("eq audio bassi")
 F15::preset("stabilizzatore alterazione 18")
 F6::preset("stabilizzatore alterazione 18")
 F16::presetSorgente("goprodefaultcolor")
 F17::newAdjustmentLayer()
-F18::preset("black bars")
+F18::preset("rodeaudiopresetvideo")
 F19::preset("-6db")
 ;F19::projSetup("Z:\Editing\FedericoLeo\LowerThirds")
 F20::preset("lumetri v-log athena")
@@ -31,7 +31,7 @@ F24::presetSorgente("flip sottosopra")
 ^F13::preset("saturazione 120 handycam")
 ^F14::preset("reframe automatico")
 ^F15::preset("trasformazione 180")
-^F16::preset("trasformazionereel")
+^F16::preset("Cam Transform Border Anchor")
 ^F17::insta360lockFix()
 ^F18::preset("rodeaudiopreset")
 
@@ -963,7 +963,7 @@ sleep 5
 
 Sendinput, ^+!9 ;CTRL SHIFT ALT 7 --- In Premiere's Keyboard Shortcuts panel, you nust find the "Effects" panel and assign the shortcut CTRL SHIFT ALT 7 to it. (The default shortcut is SHIFT 7. Because Premiere does allow multiple shortcuts per command, you can keep SHIFT 7 as well, or you can delete it. I have deleted it.)
 sleep 12
-Sendinput, ^!+9 ;you must send this shortcut again, because there are some edge cases where it may not have worked the first time.
+;Sendinput, ^!+9 ;you must send this shortcut again, because there are some edge cases where it may not have worked the first time.
 
 sleep 5
 Sendinput, ^b ;CTRL B ------- set in premiere's shortcuts panel to "select find box"
